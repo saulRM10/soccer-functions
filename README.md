@@ -28,6 +28,10 @@ To determine a soccer teams ranking you will need to follow some conditions
   npm install
   ```
   3. Right Click on index.html and "open with live server" 
+  4. Make a branch and work off that:
+        ```
+          git checkout -b myBranchName
+       ```
   4. To run tests
       - ensure you comment out lines as indicated in TableRankings.js 
       - run this command in vs code terminal 
