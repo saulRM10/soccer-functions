@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HTML with a button</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="TableRankings.js"></script>
+  </head>
+  <body>
+    <div class="container">
+    <button class="rankTeams">Start My Solution </button>
+    </div>
+
+    <button id="my-button">Results</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th>Points</th>
+        </tr>
+      </thead>
+      <tbody id="teams-table">
+      </tbody>
+    </table>
+    
+    <script>
+      const button = document.getElementById("my-button");
+      button.addEventListener("click", () => {
+        // Retrieve the data from localStorage
+        const teams =JSON.parse(localStorage.getItem("teams"));
+        if(teams){
+          // Get a reference to the table body element
+          const table = document.getElementById("teams-table");
+          // Loop through the teams array and create a new row for each team
+          teams.forEach(team => {
+            const row = document.createElement("tr");
+            const nameCell = document.createElement("td");
+            const pointsCell = document.createElement("td");
+            nameCell.innerText = team.name;
+            pointsCell.innerText = team.points;
+            row.appendChild(nameCell);
+            row.appendChild(pointsCell);
+            table.appendChild(row);
+          });
+        }else{
+          console.log("There's no data to display")
+        }
+      });
+    </script>
+
+<div class="restart-container">
+  <button class="clear">Clear Local Storage</button>
+  </div>
+  </body>
+</html>
