@@ -1,9 +1,6 @@
  $(document).ready(function(){ // comment out to run tests |  uncomment to use on browser
 const TableRankings = function(){
     var loadDomListners = function() {
-     $(".container").off("click", ".rankTeams");
-     $(".container").on("click", ".rankTeams" , startOrganizeTeams);
-
      $(".restart-container").off("click", ".clear");
      $(".restart-container").on("click", ".clear" , clearLocalStorage);
     };
@@ -114,7 +111,7 @@ const TableRankings = function(){
 
         ]
     };
-
+ startOrganizeTeams();
  loadDomListners(); // comment out to run tests
 
    // add function to return statment
