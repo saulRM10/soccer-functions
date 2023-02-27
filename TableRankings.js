@@ -1,4 +1,4 @@
- $(document).ready(function(){ // comment out to run tests |  uncomment to use on browser
+$(document).ready(function(){ // comment out to run tests |  uncomment to use on browser
 const TableRankings = function(){
     var loadDomListners = function() {
      $(".restart-container").off("click", ".clear");
@@ -8,9 +8,56 @@ const TableRankings = function(){
     var startOrganizeTeams = function(){
         // your logic starts here, button 
 
+        var finalTeamPoints = [];
+
+        // sets up to calculate final point & goal differencial
+        getTeamsData().forEach(indTeam => {
+            let team_id = indTeam.team_id;
+            let newTeam = {team_id: team_id, points: 0, gd: 0};
+            finalTeamPoints.push(newTeam);
+        })
+
+        // Calculate points & goal differencial for all teams
+        getMatchHistoryData().forEach(indMatch => {
+            
+            // Calculate goal differencial
+            let team_one_goal_count = indMatch.team_one_goal_count;
+            let team_two_goal_count = indMatch.team_two_goal_count;
+            
+            let team_one_gd = team_one_goal_count - team_two_goal_count; 
+            let team_two_gd = team_two_goal_count - team_one_goal_count;
+
+            // Place them
+            let indexTeam1inFinal = findInFinal(finalTeamPoints, indMatch.team_one_id);
+            let indexTeam2inFinal = findInFinal(finalTeamPoints, indMatch.team_two_id);
+            
+            finalTeamPoints[indexTeam1inFinal].gd += team_one_gd;
+            finalTeamPoints[indexTeam2inFinal].gd += team_two_gd;
+
+            // Calculate + place points
+            if(indMatch.tie) {
+                finalTeamPoints[indexTeam1inFinal].points++;
+                finalTeamPoints[indexTeam2inFinal].points++;
+                
+            }
+            else {
+                let indexInFinalArrayWinner = findInFinal(finalTeamPoints, indMatch.winner_id);
+                finalTeamPoints[indexInFinalArrayWinner].points+=3;
+            }
+
+        })        
+
+       finalTeamPoints.sort((team_a, team_b) => team_a.gd - team_b.gd);
+
+    //    console.log(finalTeamPoints);
+        // dataReadyForLocalStorage([{ name:"Team Name", points: 12 }]); // comment out when run test | uncomment for browser
     };
 
-    // do not change this, this send data to the fornt end 
+    var findInFinal = function(finalTeamPoints, team_id) {
+        return finalTeamPoints.findIndex(obj => obj.team_id === team_id);
+    }
+
+    // do not change this, this send data to the front end 
     // CALL IT WHEN YOU GOT YOUR SOLUTION 
     var dataReadyForLocalStorage = function(rankedTeams){
         localStorage.setItem("teams", JSON.stringify(rankedTeams));
@@ -112,7 +159,7 @@ const TableRankings = function(){
         ]
     };
  startOrganizeTeams();
- loadDomListners(); // comment out to run tests
+//  loadDomListners(); // comment out to run tests
 
    // add function to return statment
    // this will give you access to your functions outside this file
@@ -124,6 +171,7 @@ const TableRankings = function(){
         getMatchHistoryData,
     }
 }
+
 TableRankings();
 module.exports = TableRankings();
 window.TableRankings = TableRankings(); // comment out to run tests | uncomment to use on browser
