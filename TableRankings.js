@@ -47,9 +47,27 @@ const TableRankings = function(){
 
         })        
 
-       finalTeamPoints.sort((team_a, team_b) => team_a.gd - team_b.gd);
+        finalTeamPoints.sort((team_a, team_b) => team_a.gd - team_b.gd);
 
-    //    console.log(finalTeamPoints);
+        // Similar gd?
+        var i = 0; 
+        var j = 1;
+
+        // while(j != finalTeamPoints().length) {
+            let val1 = finalTeamPoints[i];
+            let val2 = finalTeamPoints[j];
+
+            // console.log(val1.points, val2.points)
+
+            if(val1.points == val2.points) {
+                // look at gd
+            }
+            else if(val1.points > val2.points) {
+                // do something else
+            }
+        // }
+
+
         // dataReadyForLocalStorage([{ name:"Team Name", points: 12 }]); // comment out when run test | uncomment for browser
     };
 
