@@ -57,4 +57,30 @@ describe("sortTeamsByPoints()", function () {
     })
 })
 
-
+describe("getRangeIndexOfTiedTeams()", function () {
+    it("given sorted team data with no tied teams, it should return an empty array", function () {
+        const calculatedTeamData = [{ "points": 4 }, { "points": 3 }, { "points": 2 }, { "points": 1 }];
+        const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
+        expect(result).toStrictEqual([]);
+    })
+    it("given sorted team data with 2 tied teams in the middle, it should return an array of length 2", function () {
+        const calculatedTeamData = [{ "points": 7 }, { "points": 4 }, { "points": 4 }, { "points": 1 }];
+        const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
+        expect(result).toStrictEqual([1, 2]);
+    })
+    it("given sorted team data with 2 tied teams in the beginning, it should return an array of length 2", function () {
+        const calculatedTeamData = [{ "points": 7 }, { "points": 7 }, { "points": 4 }, { "points": 1 }];
+        const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
+        expect(result).toStrictEqual([0, 1]);
+    })
+    it("given sorted team data with 3 tied teams at the end, it should return an array of length 3 including last index", function () {
+        const calculatedTeamData = [{ "points": 7 }, { "points": 4 }, { "points": 4 }, { "points": 4 }];
+        const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
+        expect(result).toStrictEqual([1, 3]);
+    })
+    it("given sorted team data with 2 sets of tied teams, it should return every index of that array", function () {
+        const calculatedTeamData = [{ "points": 7 }, { "points": 7 }, { "points": 4 }, { "points": 4 }];
+        const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
+        expect(result).toStrictEqual([0, 1, 2, 3]);
+    })
+})

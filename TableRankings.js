@@ -64,6 +64,42 @@ const TableRankings = function () {
         return teamData;
     }
 
+    var getRangeIndexOfTiedTeams = function (teamData) {
+        let i = 0;
+        let j = 1;
+        let arrWithIndexes = [];
+
+        while (j < teamData.length) {
+            if (teamData[i].points != teamData[j].points) {
+                if (i == j - 1) {
+                    i++;
+                }
+                else {
+                    arrWithIndexes.push(i);
+                    arrWithIndexes.push(j - 1);
+                    i = j;
+                }
+            }
+            else {
+                if (j == teamData.length - 1) {
+                    arrWithIndexes.push(i);
+                    arrWithIndexes.push(j);
+                    return arrWithIndexes;
+
+                }
+                if (teamData[j].points != teamData[j + 1].points) {
+                    arrWithIndexes.push(i);
+                    arrWithIndexes.push(j);
+                    i = j + 1;
+                    j++;
+                }
+            }
+            j++;
+        }
+
+        return arrWithIndexes;
+    }
+
     var findInFinal = function (finalTeamPoints, team_id) {
         return finalTeamPoints.findIndex(obj => obj.team_id === team_id);
     }
@@ -180,11 +216,10 @@ const TableRankings = function () {
         dataReadyForLocalStorage,
         getTeamsData,
         getMatchHistoryData,
-        // startOrganizeTeams,
         getTeamPointsAndGoalDifferential,
-        // rankTeams,
         sortTeamsByPoints,
-        getTiedPointsTeams
+        getRangeIndexOfTiedTeams
+        // rankTeams
     }
 }
 
