@@ -59,40 +59,10 @@ const TableRankings = function () {
         return finalTeamPoints;
     }
 
-    // new function that returns similar points getTiedTEams()
-
-    var rankTeams = function (calculatedTeamData, matchData) {
-        calculatedTeamData.sort((team_a, team_b) => team_b.points - team_a.points);
-
-        for (let i = 0; i < calculatedTeamData.length - 1; i++) {
-            let firstTeam = calculatedTeamData[i];
-            let secondTeam = calculatedTeamData[i + 1];
-
-            if (firstTeam.points == secondTeam.points) {
-                // getMatchHistoryData.forEach(function(match){
-                //     let team_one_id = match.team_one_id;
-                //     let team_two_id = match.team_two_id;
-
-                //     let match1 = firstTeam.team_id == team_one_id && secondTeam.team_id == team_two_id;
-                //     let match2 = secondTeam.team_id == team_one_id && firstTeam.team_id == team_two_id;
-                //     if(match1 || match2) {
-                //         return match.winner_id;
-                //     }
-                // })
-
-                // let calculatedTeamDataLoserIndex = findInFinal(calculatedTeamData, )
-
-                // if(winner_id == secondTeam.team_id) {
-                //     // [a, b] = [b, a];
-                //     let loserObject = calculatedTeamData
-                //     []
-                // }
-            }
-        }
-
-
-        // dataReadyForLocalStorage([{ name:"Team Name", points: 12 }]); // comment out when run test | uncomment for browser
-    };
+    var sortTeamsByPoints = function (teamData) {
+        teamData.sort((team_a, team_b) => team_b.points - team_a.points);
+        return teamData;
+    }
 
     var findInFinal = function (finalTeamPoints, team_id) {
         return finalTeamPoints.findIndex(obj => obj.team_id === team_id);
@@ -212,7 +182,9 @@ const TableRankings = function () {
         getMatchHistoryData,
         // startOrganizeTeams,
         getTeamPointsAndGoalDifferential,
-        rankTeams
+        // rankTeams,
+        sortTeamsByPoints,
+        getTiedPointsTeams
     }
 }
 
