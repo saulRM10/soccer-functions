@@ -66,21 +66,73 @@ describe("getRangeIndexOfTiedTeams()", function () {
     it("given sorted team data with 2 tied teams in the middle, it should return an array of length 2", function () {
         const calculatedTeamData = [{ "points": 7 }, { "points": 4 }, { "points": 4 }, { "points": 1 }];
         const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
-        expect(result).toStrictEqual([1, 2]);
+        expect(result).toStrictEqual([[1, 2]]);
     })
     it("given sorted team data with 2 tied teams in the beginning, it should return an array of length 2", function () {
         const calculatedTeamData = [{ "points": 7 }, { "points": 7 }, { "points": 4 }, { "points": 1 }];
         const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
-        expect(result).toStrictEqual([0, 1]);
+        expect(result).toStrictEqual([[0, 1]]);
     })
-    it("given sorted team data with 3 tied teams at the end, it should return an array of length 3 including last index", function () {
+    it("given sorted team data with 3 tied teams at the end, it should return an array of length 2 including last index", function () {
         const calculatedTeamData = [{ "points": 7 }, { "points": 4 }, { "points": 4 }, { "points": 4 }];
         const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
-        expect(result).toStrictEqual([1, 3]);
+        expect(result).toStrictEqual([[1, 3]]);
     })
     it("given sorted team data with 2 sets of tied teams, it should return every index of that array", function () {
         const calculatedTeamData = [{ "points": 7 }, { "points": 7 }, { "points": 4 }, { "points": 4 }];
         const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
-        expect(result).toStrictEqual([0, 1, 2, 3]);
+        expect(result).toStrictEqual([[0, 1], [2, 3]]);
+    })
+    it("given sorted team data with 2 sets of tied teams, it should return every index of that array", function () {
+        const calculatedTeamData = [{ "points": 5 }, { "points": 5 }, { "points": 4 }, { "points": 4 }, { "points": 4 }, { "points": 4 }, { "points": 3 }, { "points": 2 }];
+        const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
+        expect(result).toStrictEqual([[0, 1], [2, 5]]);
+    })
+})
+
+describe("sortTeamsByGoalDifferencial()", function () {
+    it("given an empty array (no tied teams), then return the team data as is", function () {
+        const teamData = [{ "points": 4 }, { "points": 3 }, { "points": 2 }, { "points": 1 }];
+        const arrWithIndexes = [];
+        const result = TableRankings.sortTeamsByGoalDifferencial(teamData, arrWithIndexes);
+        expect(result).toStrictEqual(teamData);
+    })
+    it("given 2 set of tied teams with different goal differencials, it should return data of sorted gds of same points", function () {
+        const teamData = [{ "gd": 0, "points": 7 }, { "gd": 1, "points": 7 }, { "gd": 1, "points": 4 }, { "gd": 0, "points": 4 }];
+        const arrWithIndexes = [[0, 1], [2, 3]];
+        const result = TableRankings.sortTeamsByGoalDifferencial(teamData, arrWithIndexes);
+        expect(result).toStrictEqual([{ "gd": 1, "points": 7 }, { "gd": 0, "points": 7 }, { "gd": 1, "points": 4 }, { "gd": 0, "points": 4 }]);
+    })
+    it("given a mix of tied & non tied teams in goal differencials, it should return data of sorted gds of same points", function () {
+        const teamData = [{ "gd": 0, "points": 7 }, { "gd": 1, "points": 7 }, { "gd": 6, "points": 5 }, { "gd": 1, "points": 4 }, { "gd": 0, "points": 4 }];
+        const arrWithIndexes = [[0, 1], [3, 4]];
+        const result = TableRankings.sortTeamsByGoalDifferencial(teamData, arrWithIndexes);
+        expect(result).toStrictEqual([{ "gd": 1, "points": 7 }, { "gd": 0, "points": 7 }, { "gd": 6, "points": 5 }, { "gd": 1, "points": 4 }, { "gd": 0, "points": 4 }]);
+    })
+    it("given bigger sets of tied teams with different goal differencials, it should return data of sorted gds of same points", function () {
+        const teamData =
+            [{ "gd": 0, "points": 5 },
+            { "gd": 1, "points": 5 },
+            { "gd": 2, "points": 4 },
+            { "gd": 1, "points": 4 },
+            { "gd": 1, "points": 4 },
+            { "gd": 6, "points": 4 },
+            { "gd": 1, "points": 3 },
+            { "gd": 1, "points": 2 }];
+
+        const arrWithIndexes = [[0, 1], [2, 5]];
+        const result = TableRankings.sortTeamsByGoalDifferencial(teamData, arrWithIndexes);
+        expect(result).toStrictEqual([{ "gd": 1, "points": 5 }, { "gd": 0, "points": 5 }, { "gd": 6, "points": 4 }, { "gd": 2, "points": 4 }, { "gd": 1, "points": 4 }, { "gd": 1, "points": 4 }, { "gd": 1, "points": 3 }, { "gd": 1, "points": 2 }]);
+    })
+    it("given data with all tied points, it should data sorted by goal differencials", function () {
+        const teamData =
+            [{ "gd": 0, "points": 5 },
+            { "gd": 1, "points": 5 },
+            { "gd": 2, "points": 5 },
+            { "gd": 1, "points": 5 }];
+
+        const arrWithIndexes = [[0, 3]];
+        const result = TableRankings.sortTeamsByGoalDifferencial(teamData, arrWithIndexes);
+        expect(result).toStrictEqual([{ "gd": 2, "points": 5 }, { "gd": 1, "points": 5 }, { "gd": 1, "points": 5 }, { "gd": 0, "points": 5 }]);
     })
 })

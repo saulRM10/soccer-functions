@@ -84,10 +84,9 @@ const TableRankings = function () {
                 if (j == teamData.length - 1) {
                     arrWithIndexes.push(i);
                     arrWithIndexes.push(j);
-                    return arrWithIndexes;
 
                 }
-                if (teamData[j].points != teamData[j + 1].points) {
+                else if (teamData[j].points != teamData[j + 1].points) {
                     arrWithIndexes.push(i);
                     arrWithIndexes.push(j);
                     i = j + 1;
@@ -97,7 +96,33 @@ const TableRankings = function () {
             j++;
         }
 
-        return arrWithIndexes;
+        const pairsOfTwo = [];
+
+        for (let i = 0; i < arrWithIndexes.length; i += 2) {
+            pairsOfTwo.push([arrWithIndexes[i], arrWithIndexes[i + 1]]);
+        }
+
+        return pairsOfTwo;
+    }
+
+    var sortTeamsByGoalDifferencial = function (teamData, arrWithIndexes) {
+        if (arrWithIndexes.length == 0) {
+            return teamData;
+        }
+
+        arrWithIndexes.forEach(pairIndex => {
+            let startIndex = pairIndex[0];
+            let endIndex = pairIndex[1];
+
+            let subTeamData = teamData.slice(startIndex, endIndex + 1);
+            subTeamData.sort((team1, team2) => team2.gd - team1.gd);
+
+            teamData.splice(startIndex, endIndex - startIndex + 1);
+            teamData.splice(startIndex, 0, subTeamData);
+            teamData = teamData.flat(1);
+        })
+
+        return teamData;
     }
 
     var findInFinal = function (finalTeamPoints, team_id) {
@@ -218,7 +243,8 @@ const TableRankings = function () {
         getMatchHistoryData,
         getTeamPointsAndGoalDifferential,
         sortTeamsByPoints,
-        getRangeIndexOfTiedTeams
+        getRangeIndexOfTiedTeams,
+        sortTeamsByGoalDifferencial
         // rankTeams
     }
 }
