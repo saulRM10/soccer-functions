@@ -50,26 +50,11 @@ describe("getTeamPointsAndGoalDifferential()", function () {
 })
 
 describe("sortTeamsByPoints()", function () {
-    it("given sorted team data, it returns an even array of start & end indexes of teams with similar points", function () {
+    it("given team data, it returns team data sorted by points in descending order", function () {
         const calculatedTeamData = [{ "gd": -2, "points": 1, "team_id": 1 }, { "gd": 2, "points": 7, "team_id": 2 }, { "gd": 0, "points": 4, "team_id": 3 }, { "gd": 0, "points": 4, "team_id": 4 }];
         const result = TableRankings.sortTeamsByPoints(calculatedTeamData);
         expect(result).toStrictEqual([{ "gd": 2, "points": 7, "team_id": 2 }, { "gd": 0, "points": 4, "team_id": 3 }, { "gd": 0, "points": 4, "team_id": 4 }, { "gd": -2, "points": 1, "team_id": 1 }]);
     })
 })
 
-// describe("getTiedPointsTeam()", function () {
-//     it("given sorted team data, it returns an even array of start & end indexes of teams with similar points", function () {
-//         const calculatedTeamData = [{ "points": 1 }, { "points": 7 }, { "points": 4 }, { "points": 4 }];
-//         const result = TableRankings.getTiedPointsTeams(calculatedTeamData);
-//         expect(result).toBe("hello");
-//     })
-// })
 
-// describe("rankTeams()", function () {
-//     it("given the calculated team data & match data, it returns a ranked array of the teams ", function () {
-//         const calculatedTeamData = [{ "gd": -2, "points": 1, "team_id": 1 }, { "gd": 2, "points": 7, "team_id": 2 }, { "gd": 0, "points": 4, "team_id": 3 }, { "gd": 0, "points": 4, "team_id": 4 }];
-//         const matchData = TableRankings.getMatchHistoryData();
-//         const result = TableRankings.rankTeams(calculatedTeamData, matchData);
-//         expect(result).toStrictEqual("hallo");
-//     })
-// })
