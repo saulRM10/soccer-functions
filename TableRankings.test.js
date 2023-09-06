@@ -57,35 +57,35 @@ describe("sortTeamsByPoints()", function () {
     })
 })
 
-describe("getRangeIndexOfTiedTeams()", function () {
+describe("getRangeIndexOfTiedPointsTeams()", function () {
     it("given sorted team data with no tied teams, it should return an empty array", function () {
         const calculatedTeamData = [{ "points": 4 }, { "points": 3 }, { "points": 2 }, { "points": 1 }];
-        const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
+        const result = TableRankings.getRangeIndexOfTiedPointsTeams(calculatedTeamData);
         expect(result).toStrictEqual([]);
     })
     it("given sorted team data with 2 tied teams in the middle, it should return an array of length 2", function () {
         const calculatedTeamData = [{ "points": 7 }, { "points": 4 }, { "points": 4 }, { "points": 1 }];
-        const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
+        const result = TableRankings.getRangeIndexOfTiedPointsTeams(calculatedTeamData);
         expect(result).toStrictEqual([[1, 2]]);
     })
     it("given sorted team data with 2 tied teams in the beginning, it should return an array of length 2", function () {
         const calculatedTeamData = [{ "points": 7 }, { "points": 7 }, { "points": 4 }, { "points": 1 }];
-        const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
+        const result = TableRankings.getRangeIndexOfTiedPointsTeams(calculatedTeamData);
         expect(result).toStrictEqual([[0, 1]]);
     })
     it("given sorted team data with 3 tied teams at the end, it should return an array of length 2 including last index", function () {
         const calculatedTeamData = [{ "points": 7 }, { "points": 4 }, { "points": 4 }, { "points": 4 }];
-        const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
+        const result = TableRankings.getRangeIndexOfTiedPointsTeams(calculatedTeamData);
         expect(result).toStrictEqual([[1, 3]]);
     })
     it("given sorted team data with 2 sets of tied teams, it should return every index of that array", function () {
         const calculatedTeamData = [{ "points": 7 }, { "points": 7 }, { "points": 4 }, { "points": 4 }];
-        const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
+        const result = TableRankings.getRangeIndexOfTiedPointsTeams(calculatedTeamData);
         expect(result).toStrictEqual([[0, 1], [2, 3]]);
     })
     it("given sorted team data with 2 sets of tied teams, it should return every index of that array", function () {
         const calculatedTeamData = [{ "points": 5 }, { "points": 5 }, { "points": 4 }, { "points": 4 }, { "points": 4 }, { "points": 4 }, { "points": 3 }, { "points": 2 }];
-        const result = TableRankings.getRangeIndexOfTiedTeams(calculatedTeamData);
+        const result = TableRankings.getRangeIndexOfTiedPointsTeams(calculatedTeamData);
         expect(result).toStrictEqual([[0, 1], [2, 5]]);
     })
 })
@@ -134,5 +134,49 @@ describe("sortTeamsByGoalDifferencial()", function () {
         const arrWithIndexes = [[0, 3]];
         const result = TableRankings.sortTeamsByGoalDifferencial(teamData, arrWithIndexes);
         expect(result).toStrictEqual([{ "gd": 2, "points": 5 }, { "gd": 1, "points": 5 }, { "gd": 1, "points": 5 }, { "gd": 0, "points": 5 }]);
+    })
+})
+
+describe("getRangeIndexOfTiedTeams()", function () {
+    it("given sorted teams by points & gd, it returns range of index with similar points & gd", function () {
+        const sortedByPointsAndGDTeam =
+            [{ "gd": 1, "points": 5 },
+            { "gd": 0, "points": 5 },
+            { "gd": 6, "points": 4 },
+            { "gd": 2, "points": 4 },
+            { "gd": 1, "points": 4 },
+            { "gd": 1, "points": 4 },
+            { "gd": 1, "points": 3 },
+            { "gd": 1, "points": 2 }];
+        const result = TableRankings.getRangeIndexOfTiedTeams(sortedByPointsAndGDTeam);
+        expect(result).toStrictEqual([[4, 5]]);
+    })
+    it("given sorted teams by points & gd, it returns range of index with similar points & gd", function () {
+        const sortedByPointsAndGDTeam =
+            [{ "gd": 1, "points": 5 },
+            { "gd": 1, "points": 5 },
+            { "gd": 1, "points": 4 },
+            { "gd": 1, "points": 4 }];
+        const result = TableRankings.getRangeIndexOfTiedTeams(sortedByPointsAndGDTeam);
+        expect(result).toStrictEqual([[0, 1], [2, 3]]);
+    })
+    it("given sorted teams by points & gd, it returns range of index with similar points & gd", function () {
+        const sortedByPointsAndGDTeam =
+            [{ "gd": 1, "points": 5 },
+            { "gd": 1, "points": 4 },
+            { "gd": 1, "points": 4 },
+            { "gd": 1, "points": 4 }];
+        const result = TableRankings.getRangeIndexOfTiedTeams(sortedByPointsAndGDTeam);
+        expect(result).toStrictEqual([[1, 3]]);
+    })
+    it("given sorted teams by points & gd, it returns range of index with similar points & gd", function () {
+        const sortedByPointsAndGDTeam =
+            [{ "gd": 1, "points": 5 },
+            { "gd": 1, "points": 5 },
+            { "gd": 1, "points": 4 },
+            { "gd": 1, "points": 4 },
+            { "gd": 1, "points": 4 }];
+        const result = TableRankings.getRangeIndexOfTiedTeams(sortedByPointsAndGDTeam);
+        expect(result).toStrictEqual([[0, 1], [2, 4]]);
     })
 })

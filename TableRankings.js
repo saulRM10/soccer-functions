@@ -64,7 +64,7 @@ const TableRankings = function () {
         return teamData;
     }
 
-    var getRangeIndexOfTiedTeams = function (teamData) {
+    var getRangeIndexOfTiedPointsTeams = function (teamData) {
         let i = 0;
         let j = 1;
         let arrWithIndexes = [];
@@ -123,6 +123,40 @@ const TableRankings = function () {
         })
 
         return teamData;
+    }
+
+    var getRangeIndexOfTiedTeams = function (sortedByPointsAndGDTeam) {
+        let i = 0;
+        let j = 1;
+        let arrWithIndexes = [];
+
+        while (j < sortedByPointsAndGDTeam.length) {
+            let isSamePoints = sortedByPointsAndGDTeam[i].points == sortedByPointsAndGDTeam[j].points;
+            let isSameGD = sortedByPointsAndGDTeam[i].gd == sortedByPointsAndGDTeam[j].gd;
+
+            if (isSamePoints && isSameGD) {
+                let isEndOfEqualPoints = sortedByPointsAndGDTeam[j].points != sortedByPointsAndGDTeam[j + 1]?.points;
+                let isEndOfEqualGD = sortedByPointsAndGDTeam[j].gd != sortedByPointsAndGDTeam[j + 1]?.gd;
+
+                if (isEndOfEqualPoints || isEndOfEqualGD) {
+                    console.log("last pair before out of range", i, j);
+                    arrWithIndexes.push([i, j]);
+                    i = j + 1;
+                    j += 2;
+                    continue;
+                }
+                if (j == sortedByPointsAndGDTeam.length - 1) {
+                    console.log("last", i, j);
+                    arrWithIndexes.push([i, j]);
+                }
+            }
+            else {
+                i++;
+            }
+            j++;
+        }
+
+        return arrWithIndexes;
     }
 
     var findInFinal = function (finalTeamPoints, team_id) {
@@ -243,8 +277,9 @@ const TableRankings = function () {
         getMatchHistoryData,
         getTeamPointsAndGoalDifferential,
         sortTeamsByPoints,
-        getRangeIndexOfTiedTeams,
-        sortTeamsByGoalDifferencial
+        getRangeIndexOfTiedPointsTeams,
+        sortTeamsByGoalDifferencial,
+        getRangeIndexOfTiedTeams
         // rankTeams
     }
 }
