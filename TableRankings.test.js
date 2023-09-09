@@ -180,3 +180,314 @@ describe("getRangeIndexOfTiedTeams()", function () {
         expect(result).toStrictEqual([[0, 1], [2, 4]]);
     })
 })
+
+describe("getRelevantTeam()", function () {
+    it("given an array with a pair, return all relevant teams within pair : 0", function () {
+        const teamData = [{ "team_id": 1, "points": 6, "gd": 7 }, { "team_id": 3, "points": 4, "gd": 1 }, { "team_id": 2, "points": 4, "gd": 1 }];
+        const tiedPointsAndGdTeamsIndexRange = [1, 2];
+        const result = TableRankings.getRelevantTeam(teamData, tiedPointsAndGdTeamsIndexRange);
+        expect(result).toStrictEqual({ "2": 0, "3": 0 });
+    })
+    it("given an array with a pair, return all relevant teams within pair : 0", function () {
+        const teamData = [{ "team_id": 1, "points": 4, "gd": 1 }, { "team_id": 2, "points": 4, "gd": 1 }, { "team_id": 3, "points": 4, "gd": 1 }];
+        const tiedPointsAndGdTeamsIndexRange = [0, 2];
+        const result = TableRankings.getRelevantTeam(teamData, tiedPointsAndGdTeamsIndexRange);
+        expect(result).toStrictEqual({ "1": 0, "2": 0, "3": 0 });
+    })
+})
+
+describe("rankTeams()", function () {
+    it("given 2 way tie, return final team data ranked", function () {
+        const matchData = [
+            {
+                match_id: 100,
+                team_one_id: 1,
+                team_two_id: 2,
+                team_one_goal_count: 2,
+                team_two_goal_count: 3,
+                winner_id: 2,
+                losser_id: 1,
+                tie: false,
+            },
+            {
+                match_id: 404,
+                team_one_id: 3,
+                team_two_id: 2,
+                team_one_goal_count: 2,
+                team_two_goal_count: 3,
+                winner_id: 2,
+                losser_id: 3,
+                tie: false,
+            },
+        ]
+
+        const teamData =
+            [{ "team_id": 3, "points": 6, "gd": 7 },
+            { "team_id": 1, "points": 4, "gd": 1 },
+            { "team_id": 2, "points": 4, "gd": 1 }];
+
+        const tiedPointsAndGdTeamsIndexRange = [[1, 2]];
+
+        const expectedResult = [{ "team_id": 3, "points": 6, "gd": 7 }, { "team_id": 2, "points": 4, "gd": 1 }, { "team_id": 1, "points": 4, "gd": 1 }];
+
+
+    })
+
+    it("given 3 way tie, return final team data ranked", function () {
+        const matchData = [
+            {
+                match_id: 111,
+                team_one_id: 1,
+                team_two_id: 2,
+                team_one_goal_count: 2,
+                team_two_goal_count: 2,
+                winner_id: null,
+                loser_id: null,
+                tie: true,
+            },
+            {
+                match_id: 221,
+                team_one_id: 1,
+                team_two_id: 3,
+                team_one_goal_count: 1,
+                team_two_goal_count: 2,
+                winner_id: 3,
+                loser_id: 1,
+                tie: false,
+            },
+            {
+                match_id: 313,
+                team_one_id: 2,
+                team_two_id: 3,
+                team_one_goal_count: 1,
+                team_two_goal_count: 1,
+                winner_id: null,
+                loser_id: null,
+                tie: true,
+            },
+            {
+                match_id: 22222,
+                team_one_id: 10,
+                team_two_id: 3,
+                team_one_goal_count: 1,
+                team_two_goal_count: 1,
+                winner_id: null,
+                loser_id: null,
+                tie: true,
+            },
+        ];
+
+        const teamData = [
+            { "team_id": 10, "points": 100, "gd": 100 },
+            { "team_id": 1, "points": 1, "gd": 0 },
+            { "team_id": 2, "points": 1, "gd": 0 },
+            { "team_id": 3, "points": 1, "gd": 0 },
+        ];
+
+        const tiedTeamRange = [[1, 3]];
+
+        const result = TableRankings.rankTeams(matchData, teamData, tiedTeamRange);
+        expect(result).toStrictEqual([{ "gd": 100, "points": 100, "team_id": 10 }, { "gd": 0, "points": 1, "team_id": 3 }, { "gd": 0, "points": 1, "team_id": 1 }, { "gd": 0, "points": 1, "team_id": 2 }]);
+
+    })
+
+    it("given 4 way tie, return final team data ranked", function () {
+        const matchData = [
+            {
+                match_id: 1,
+                team_one_id: 1,
+                team_two_id: 2,
+                team_one_goal_count: 2,
+                team_two_goal_count: 1,
+                winner_id: 1,
+                loser_id: 2,
+                tie: false,
+            },
+            {
+                match_id: 2,
+                team_one_id: 1,
+                team_two_id: 3,
+                team_one_goal_count: 1,
+                team_two_goal_count: 2,
+                winner_id: 3,
+                loser_id: 1,
+                tie: false,
+            },
+            {
+                match_id: 3,
+                team_one_id: 1,
+                team_two_id: 4,
+                team_one_goal_count: 2,
+                team_two_goal_count: 1,
+                winner_id: 1,
+                loser_id: 4,
+                tie: false,
+            },
+            {
+                match_id: 4,
+                team_one_id: 2,
+                team_two_id: 3,
+                team_one_goal_count: 2,
+                team_two_goal_count: 1,
+                winner_id: 2,
+                loser_id: 3,
+                tie: false,
+            },
+            {
+                match_id: 5,
+                team_one_id: 2,
+                team_two_id: 4,
+                team_one_goal_count: 1,
+                team_two_goal_count: 2,
+                winner_id: 4,
+                loser_id: 2,
+                tie: false,
+            },
+            {
+                match_id: 6,
+                team_one_id: 3,
+                team_two_id: 4,
+                team_one_goal_count: 2,
+                team_two_goal_count: 1,
+                winner_id: 3,
+                loser_id: 4,
+                tie: false,
+            },
+            {
+                match_id: 2432,
+                team_one_id: 10,
+                team_two_id: 3,
+                team_one_goal_count: 1,
+                team_two_goal_count: 1,
+                winner_id: null,
+                loser_id: null,
+                tie: true,
+            },
+        ];
+
+        const teamData = [
+            { "team_id": 10, "points": 100, "gd": 100 },
+            { "team_id": 1, "points": 6, "gd": 0 },
+            { "team_id": 2, "points": 6, "gd": 0 },
+            { "team_id": 3, "points": 6, "gd": 0 },
+            { "team_id": 4, "points": 6, "gd": 0 },
+        ];
+
+        const tiedTeamRange = [[1, 4]];
+
+        const result = TableRankings.rankTeams(matchData, teamData, tiedTeamRange);
+        expect(result).toStrictEqual([{ "gd": 100, "points": 100, "team_id": 10 }, { "gd": 0, "points": 6, "team_id": 1 }, { "gd": 0, "points": 6, "team_id": 3 }, { "gd": 0, "points": 6, "team_id": 2 }, { "gd": 0, "points": 6, "team_id": 4 }]);
+    })
+
+    it("given 2 (3-way) ties, return final team data ranked", function () {
+        const matchData = [
+            {
+                match_id: 1,
+                team_one_id: 1,
+                team_two_id: 2,
+                team_one_goal_count: 3,
+                team_two_goal_count: 1,
+                winner_id: 1,
+                loser_id: 2,
+                tie: false,
+            },
+            {
+                match_id: 2,
+                team_one_id: 2,
+                team_two_id: 3,
+                team_one_goal_count: 2,
+                team_two_goal_count: 2,
+                winner_id: null,
+                loser_id: null,
+                tie: true,
+            },
+            {
+                match_id: 3,
+                team_one_id: 1,
+                team_two_id: 3,
+                team_one_goal_count: 1,
+                team_two_goal_count: 2,
+                winner_id: 3,
+                loser_id: 1,
+                tie: false,
+            },
+            {
+                match_id: 4,
+                team_one_id: 11,
+                team_two_id: 22,
+                team_one_goal_count: 2,
+                team_two_goal_count: 2,
+                winner_id: null,
+                loser_id: null,
+                tie: true,
+            },
+            {
+                match_id: 5,
+                team_one_id: 22,
+                team_two_id: 33,
+                team_one_goal_count: 1,
+                team_two_goal_count: 3,
+                winner_id: 33,
+                loser_id: 22,
+                tie: false,
+            },
+            {
+                match_id: 6,
+                team_one_id: 11,
+                team_two_id: 33,
+                team_one_goal_count: 2,
+                team_two_goal_count: 1,
+                winner_id: 11,
+                loser_id: 33,
+                tie: false,
+            },
+            // Additional random matches with other team ids (10 and 4004)
+            {
+                match_id: 7,
+                team_one_id: 10,
+                team_two_id: 4004,
+                team_one_goal_count: 2,
+                team_two_goal_count: 1,
+                winner_id: 10,
+                loser_id: 4004,
+                tie: false,
+            },
+            {
+                match_id: 8,
+                team_one_id: 4004,
+                team_two_id: 1,
+                team_one_goal_count: 0,
+                team_two_goal_count: 1,
+                winner_id: 1,
+                loser_id: 4004,
+                tie: false,
+            },
+            {
+                match_id: 9,
+                team_one_id: 10,
+                team_two_id: 11,
+                team_one_goal_count: 1,
+                team_two_goal_count: 2,
+                winner_id: 11,
+                loser_id: 10,
+                tie: false,
+            },
+        ];
+
+        const teamData = [
+            { "team_id": 10, "points": 100, "gd": 100 },
+            { "team_id": 11, "points": 6, "gd": 0 },
+            { "team_id": 22, "points": 6, "gd": 0 },
+            { "team_id": 33, "points": 6, "gd": 0 },
+            { "team_id": 4004, "points": 5, "gd": 4 },
+            { "team_id": 1, "points": 1, "gd": 0 },
+            { "team_id": 2, "points": 1, "gd": 0 },
+            { "team_id": 3, "points": 1, "gd": 0 },
+        ];
+
+        const tiedTeamRange = [[1, 3], [5, 7]];
+
+        const result = TableRankings.rankTeams(matchData, teamData, tiedTeamRange);
+        expect(result).toStrictEqual([{ "gd": 100, "points": 100, "team_id": 10 }, { "gd": 0, "points": 6, "team_id": 11 }, { "gd": 0, "points": 6, "team_id": 33 }, { "gd": 0, "points": 6, "team_id": 22 }, { "gd": 4, "points": 5, "team_id": 4004 }, { "gd": 0, "points": 1, "team_id": 1 }, { "gd": 0, "points": 1, "team_id": 3 }, { "gd": 0, "points": 1, "team_id": 2 }]);
+    })
+})

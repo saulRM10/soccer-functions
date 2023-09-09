@@ -139,7 +139,6 @@ const TableRankings = function () {
                 let isEndOfEqualGD = sortedByPointsAndGDTeam[j].gd != sortedByPointsAndGDTeam[j + 1]?.gd;
 
                 if (isEndOfEqualPoints || isEndOfEqualGD) {
-                    console.log("last pair before out of range", i, j);
                     arrWithIndexes.push([i, j]);
                     i = j + 1;
                     j += 2;
@@ -157,6 +156,62 @@ const TableRankings = function () {
         }
 
         return arrWithIndexes;
+    }
+
+    var getRelevantTeam = function (teamData, tiedPointsAndGdTeamsIndexRange) {
+        let calculateWinnerIds = {};
+        let begin = tiedPointsAndGdTeamsIndexRange[0]; // 1
+        let end = tiedPointsAndGdTeamsIndexRange[1]; // 4
+
+        for (let i = begin; i <= end; i++) {
+            var getTeamId = teamData[i].team_id;
+            calculateWinnerIds[getTeamId] = 0;
+        }
+
+        return calculateWinnerIds;
+    }
+
+    var rankTeams = function (matchData, teamData, tiedTeamRange) {
+        tiedTeamRange.forEach(pair => {
+            var calcWinnerIds = getRelevantTeam(teamData, pair);
+            const teamKeys = Object.keys(calcWinnerIds);
+
+            let i = 0;
+            let j = 1;
+            while (i != teamKeys.length - 1) {
+                let team1 = teamKeys[i];
+                let team2 = teamKeys[j];
+
+                const matchesBothTeams = matchData.filter(team => (team.team_one_id === Number(team1) && team.team_two_id === Number(team2)) || (team.team_one_id === Number(team2) && team.team_two_id === Number(team1))).filter(team => team.match_id);
+                const getWinnerId = matchesBothTeams[0].winner_id;
+
+                if (getWinnerId) {
+                    calcWinnerIds[getWinnerId]++;
+                }
+
+                if (j == teamKeys.length - 1) {
+                    i++;
+                    j = i;
+                }
+                j++;
+            }
+
+            let doubleArrayWinnerIds = Object.entries(calcWinnerIds);
+            let sortArrayWinnerIds = doubleArrayWinnerIds.sort((team1, team2) => team2[1] - team1[1]);
+
+            let subTeamData = teamData.slice(pair[0], pair[1] + 1);
+            let rankedSubTeamData = [];
+            sortArrayWinnerIds.forEach(pair => {
+                const team_id = Number(pair[0]);
+                const subTeamIndex = findInFinal(subTeamData, team_id); // 2 0 1
+                rankedSubTeamData.push(subTeamData[subTeamIndex]);
+            })
+
+            teamData.splice(pair[0], pair[1] - pair[0] + 1);
+            teamData.splice(pair[0], 0, rankedSubTeamData);
+            teamData = teamData.flat(1);
+        })
+        return teamData;
     }
 
     var findInFinal = function (finalTeamPoints, team_id) {
@@ -279,8 +334,9 @@ const TableRankings = function () {
         sortTeamsByPoints,
         getRangeIndexOfTiedPointsTeams,
         sortTeamsByGoalDifferencial,
-        getRangeIndexOfTiedTeams
-        // rankTeams
+        getRangeIndexOfTiedTeams,
+        getRelevantTeam,
+        rankTeams
     }
 }
 
